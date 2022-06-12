@@ -44,7 +44,7 @@ of not using the masks in public places.
 	
 -- 3. From those positive cases, how many are men and women?
 select
-	sd.DESCRIPCIÓN,
+	sd.DESCRIPCIÃ“N,
 	count(gcm.RESULTADO) as "Count_of_Patients"
 from
 	general_covid19_mx gcm
@@ -53,7 +53,7 @@ join sex_data sd on
 where
 	gcm.RESULTADO = 1
 group by
-	sd.DESCRIPCIÓN; 
+	sd.DESCRIPCIÃ“N; 
 /* 
 There were 198,358 Men and 172,354 Women that tested positive during this period of time.
 */
@@ -91,7 +91,7 @@ This makes a lot of sence, since Mexico City is one of the most populated cities
 
 -- 6. Type of Patients
 select
-	top.DESCRIPCIÓN as "Type_of_Patient",
+	top.DESCRIPCIÃ“N as "Type_of_Patient",
 	count(gcm.TIPO_PACIENTE) as "Count_of_Patients"
 from
 	general_covid19_mx gcm
@@ -142,7 +142,7 @@ June was the month with more Deaths of COVID 19
 
 -- 9. Average age of patients with Positive Results that Passed Away  
 select
-	sd.DESCRIPCIÓN ,
+	sd.DESCRIPCIÃ“N ,
 	round(avg(gcm.EDAD), 0) as "Average Age"
 from
 	general_covid19_mx as gcm
