@@ -1,0 +1,43 @@
+1. FIND HOW MANY DOWNLOADS OCCUR BASED ON THE DATE AND FIND RECORDS WHERE FREE USERS HAVE MORE DOWNLOADS THAN PREMIUM USERS 
+
+# Joining the data into a single data set
+WITH cte_merged as (
+    select dwlds.*, acc.* 
+    from ms_user_dimension as users
+    JOIN ms_download_facts as dwlds
+    on  users.user_id = dwlds.user_id
+    JOIN ms_acc_dimension as acc
+    on users.acc_id = acc.acc_id
+    ),
+# Table with the SUM of Premium Users and grouped by date 
+cte_premium as (
+SELECT date, paying_customer, sum(downloads) as "premium_members"
+FROM cte_merged
+WHERE paying_customer = "yes"
+GROUP BY date
+order by 1 asc
+),
+# Table with the SUM of Free Users and grouped by date 
+cte_free as (
+    SELECT date, paying_customer, sum(downloads) as "free_members"
+    FROM cte_merged
+    WHERE paying_customer = "no"
+    GROUP BY date
+    order by 1 asc
+),
+# Data joined from the free users table and the premium users table. Added a new column in order to verify if free users have more downloads than premium users
+cte_analysis as (
+    SELECT cte1.date, cte1.premium_members, cte2.free_members,
+        (CASE 
+            WHEN cte2.free_members > cte1.premium_members then "True"
+            ELSE "False"
+            END) as verification
+    FROM cte_premium as cte1
+    JOIN cte_free as cte2
+    on cte1.date = cte2.date
+)
+
+SELECT date, free_members, premium_members
+FROM cte_analysis 
+WHERE verification = "True"
+ORDER BY 1 ASC
